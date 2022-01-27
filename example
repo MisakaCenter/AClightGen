@@ -1,0 +1,15 @@
+
+/*Assert 
+    Ex (x: typ)(y: typ), 
+    PROP{};; 
+    LOCAL{Temp id expr_val type};; 
+    SEP{ (Data_at expr_val type expr_val) * (Data_at expr_val type expr_val) * (Emp) } 
+*/
+
+/*Inv
+
+*/
+
+type: Ctype
+typ: Z | Ptr
+expr_val: expr_val
