@@ -86,6 +86,7 @@ let rec add_stmt s =
   | Sskip -> ()
   | Sdo e -> add_exp e
   | Sseq(s1, s2) -> add_stmt s1; add_stmt s2
+  | Sassertion(s1, s2) -> add_stmt s2
   | Sif(e, s1, s2) -> add_exp e; add_stmt s1; add_stmt s2
   | Swhile(e, s1) -> add_exp e; add_stmt s1
   | Sdowhile(s1, e) -> add_stmt s1; add_exp e

@@ -37,6 +37,7 @@ let fold_over_stmt_loc ~(expr: 'a -> location -> exp -> 'a)
     | Sdo e -> expr a s.sloc e
     | Sif (e, s1, s2) -> fold (fold (expr a s.sloc e) s1) s2
     | Sseq (s1, s2) -> fold (fold a s1) s2
+    | Sassertion (s1, s2) -> fold a s2
     | Sfor (s1, e, s2, s3) -> fold (fold (expr (fold a s1) s.sloc e) s2) s3
     | Swhile(e, s1) -> fold (expr a s.sloc e) s1
     | Sdowhile (s1, e) -> expr (fold a s1) s.sloc e

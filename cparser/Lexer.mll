@@ -91,7 +91,10 @@ let () =
       ("unsigned", fun loc -> UNSIGNED loc);
       ("void", fun loc -> VOID loc);
       ("volatile", fun loc -> VOLATILE loc);
-      ("while", fun loc -> WHILE loc)];
+      ("while", fun loc -> WHILE loc);
+      ("const", fun loc -> CONST loc);
+      ];
+      
   if Configuration.system <> "diab" then
     (* We can ignore the __extension__ GCC keyword. *)
     ignored_keywords := SSet.add "__extension__" !ignored_keywords
@@ -257,6 +260,8 @@ let escape_sequence =
 rule initial = parse
   | '\n'                          { new_line lexbuf; initial_linebegin lexbuf }
   | whitespace_char_no_newline +  { initial lexbuf }
+  | "/*ASSERT"                    { ASSERTbegin(currentLoc lexbuf) }
+  | "END*/"                       { ASSERTend(currentLoc lexbuf) }
   | "/*"                          { multiline_comment lexbuf; initial lexbuf }
   | "//"                          { singleline_comment lexbuf; initial lexbuf }
   | integer_constant as s         { CONSTANT (Cabs.CONST_INT s, currentLoc lexbuf) }
@@ -292,6 +297,10 @@ rule initial = parse
                                     STRING_LITERAL(false, l, currentLoc lexbuf) }
   | "L\""                         { let l = string_literal lexbuf.lex_start_p [] lexbuf in
                                     STRING_LITERAL(true, l, currentLoc lexbuf) }
+  | "|]"                          { let l = string_literal_assert lexbuf.lex_start_p [] lexbuf in
+                                    STRING_LITERAL_ASSERT(false, l, currentLoc lexbuf) }
+  | "[|"                         { let l = string_literal_assert lexbuf.lex_start_p [] lexbuf in
+                                    STRING_LITERAL_ASSERT(true, l, currentLoc lexbuf) }
   | "..."                         { ELLIPSIS(currentLoc lexbuf) }
   | "+="                          { ADD_ASSIGN(currentLoc lexbuf) }
   | "-="                          { SUB_ASSIGN(currentLoc lexbuf) }
@@ -389,6 +398,13 @@ and string_literal startp accu = parse
                  List.rev accu }
   | '\n' | eof { fatal_error lexbuf "missing terminating '\"' character" }
   | ""         { let c = char lexbuf in string_literal startp (c :: accu) lexbuf }
+
+and string_literal_assert startp accu = parse
+  | "|]"       { lexbuf.lex_start_p <- startp;
+                 List.rev accu }
+  | '\n' { new_line lexbuf; string_literal_assert startp accu lexbuf }
+  | eof { fatal_error lexbuf "missing terminating '\"' character" }
+  | ""         { let c = char lexbuf in string_literal_assert startp (c :: accu) lexbuf }
 
 (* We assume gcc -E syntax but try to tolerate variations. *)
 and hash = parse
@@ -581,6 +597,8 @@ and singleline_comment = parse
       | Pre_parser.STAR loc -> loop (Parser.STAR loc)
       | Pre_parser.STATIC loc -> loop (Parser.STATIC loc)
       | Pre_parser.STATIC_ASSERT loc -> loop (Parser.STATIC_ASSERT loc)
+      | Pre_parser.ASSERTbegin loc -> loop (Parser.ASSERTbegin loc)
+      | Pre_parser.ASSERTend loc -> loop (Parser.ASSERTend loc)
       | Pre_parser.STRING_LITERAL (wide, str, loc) ->
           (* Merge consecutive string literals *)
           let rec doConcat wide str =
@@ -596,6 +614,21 @@ and singleline_comment = parse
           in
           let (wide', str') = doConcat wide str in
           loop (Parser.STRING_LITERAL ((wide', str'), loc))
+      | Pre_parser.STRING_LITERAL_ASSERT (wide, str, loc) ->
+          (* Merge consecutive string literals *)
+          let rec doConcat wide str =
+            match Queue.peek tokens with
+            | Pre_parser.STRING_LITERAL_ASSERT (wide', str', loc) ->
+               ignore (Queue.pop tokens);
+               let (wide'', str'') = doConcat wide' str' in
+               if str'' <> []
+               then (wide || wide'', str @ str'')
+               else (wide, str)
+            | _ -> (wide, str)
+            | exception Queue.Empty -> (wide, str)
+          in
+          let (wide', str') = doConcat wide str in
+          loop (Parser.STRING_LITERAL_ASSERT ((wide', str'), loc))
       | Pre_parser.STRUCT loc -> loop (Parser.STRUCT loc)
       | Pre_parser.SUB_ASSIGN loc -> loop (Parser.SUB_ASSIGN loc)
       | Pre_parser.SWITCH loc -> loop (Parser.SWITCH loc)

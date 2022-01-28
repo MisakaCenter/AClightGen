@@ -561,6 +561,9 @@ Fixpoint transl_stmt (s: Csyntax.statement) : mon statement :=
       ret (Slabel lbl ts1)
   | Csyntax.Sgoto lbl =>
       ret (Sgoto lbl)
+  | Csyntax.Sassertion a s1 =>
+      do ts1 <- transl_stmt s1;
+      ret (Sassertion a ts1)
   end
 
 with transl_lblstmt (ls: Csyntax.labeled_statements) : mon labeled_statements :=

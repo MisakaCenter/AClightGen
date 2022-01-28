@@ -486,6 +486,9 @@ Inductive tr_stmt: Csyntax.statement -> statement -> Prop :=
   | tr_label: forall lbl s ts,
       tr_stmt s ts ->
       tr_stmt (Csyntax.Slabel lbl s) (Slabel lbl ts)
+  | tr_assert: forall lbl s ts,
+      tr_stmt s ts ->
+      tr_stmt (Csyntax.Sassertion lbl s) (Sassertion lbl ts)
   | tr_goto: forall lbl,
       tr_stmt (Csyntax.Sgoto lbl) (Sgoto lbl)
 

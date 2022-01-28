@@ -452,6 +452,8 @@ let rec stmt pp s =
       fprintf pp "%a:@ %a" slabel lbl stmt s1
   | Sgoto lbl ->
       fprintf pp "goto %s;" lbl
+  | Sassertion(lbl, s1) ->
+      fprintf pp "%s@ %a" lbl stmt s1
   | Sreturn None ->
       fprintf pp "return;"
   | Sreturn (Some e) ->

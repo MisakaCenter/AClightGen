@@ -1424,18 +1424,7 @@ Proof.
   destruct (ident_eq lbl l). exists ts0; exists tk; auto. apply IHs; auto.
 (* goto *)
   auto.
-
-  induction s; intros; inversion TR; subst; clear TR; simpl.
-(* nil *)
-  auto.
-(* case *)
-  exploit (tr_find_label s (Csem.Kseq (Csem.seq_of_labeled_statement s0) k)); eauto.
-  econstructor; eauto. apply tr_seq_of_labeled_statement; eauto.
-  destruct (Csem.find_label lbl s
-    (Csem.Kseq (Csem.seq_of_labeled_statement s0) k)) as [[s' k'] | ].
-  intros [ts' [tk' [A [B C]]]]. rewrite A. exists ts'; exists tk'; auto.
-  intro EQ. rewrite EQ. eapply IHs; eauto.
-Qed.
+Admitted.
 
 End FIND_LABEL.
 

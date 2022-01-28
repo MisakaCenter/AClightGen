@@ -450,6 +450,8 @@ let rec transf_stmt s =
       {s with sdesc = Sdo(transf_expr Effects e)}
   | Sseq(s1, s2) ->
       {s with sdesc = Sseq(transf_stmt s1, transf_stmt s2)}
+  | Sassertion(s1, s2) ->
+      {s with sdesc = Sassertion(s1, transf_stmt s2)}
   | Sif(e, s1, s2) ->
       {s with sdesc = Sif(transf_expr Val e,
                           transf_stmt s1, transf_stmt s2)}

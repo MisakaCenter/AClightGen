@@ -161,6 +161,7 @@ and stmt_desc env = function
   | Sskip -> Sskip
   | Sdo a -> Sdo (exp env a)
   | Sseq(s1, s2) -> Sseq(stmt env s1, stmt env s2)
+  | Sassertion(s1, s2) -> Sassertion(s1, stmt env s2)
   | Sif(a, s1, s2) -> Sif(exp env a, stmt env s1, stmt env s2)
   | Swhile(a, s) -> Swhile(exp env a, stmt env s)
   | Sdowhile(s, a) -> Sdowhile(stmt env s, exp env a)

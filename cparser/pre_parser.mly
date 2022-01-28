@@ -48,6 +48,7 @@
   VAR_NAME TYPEDEF_NAME
 %token<Cabs.constant * Cabs.loc> CONSTANT
 %token<bool * int64 list * Cabs.loc> STRING_LITERAL
+%token<bool * int64 list * Cabs.loc> STRING_LITERAL_ASSERT
 %token<string * Cabs.loc> PRAGMA
 
 %token<Cabs.loc> SIZEOF PTR INC DEC LEFT RIGHT LEQ GEQ EQEQ EQ NEQ LT GT
@@ -58,7 +59,7 @@
   AUTO REGISTER INLINE NORETURN CHAR SHORT INT LONG SIGNED UNSIGNED FLOAT DOUBLE
   UNDERSCORE_BOOL CONST VOLATILE VOID STRUCT UNION ENUM CASE DEFAULT IF ELSE
   SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN BUILTIN_VA_ARG ALIGNOF
-  ATTRIBUTE ALIGNAS PACKED ASM BUILTIN_OFFSETOF STATIC_ASSERT
+  ATTRIBUTE ALIGNAS PACKED ASM BUILTIN_OFFSETOF STATIC_ASSERT ASSERTbegin ASSERTend
 
 %token EOF
 
@@ -215,6 +216,11 @@ general_identifier:
 string_literals_list:
 | STRING_LITERAL
 | string_literals_list STRING_LITERAL
+    {}
+
+string_literals_assert_list:
+| STRING_LITERAL_ASSERT
+| string_literals_list STRING_LITERAL_ASSERT
     {}
 
 save_context:
@@ -614,6 +620,7 @@ static_assert_declaration:
 |  STATIC_ASSERT LPAREN constant_expression COMMA string_literals_list RPAREN SEMICOLON
     {}
 
+
 function_specifier:
 | INLINE
 | NORETURN
@@ -783,6 +790,7 @@ statement:
 | iteration_statement
 | jump_statement
 | asm_statement
+| assertion_stmt
     {}
 
 labeled_statement:
@@ -839,6 +847,10 @@ iteration_statement:
 | ctx = save_context do_statement1 WHILE LPAREN expression RPAREN SEMICOLON
 | ctx = save_context FOR LPAREN for_statement_header optional(expression, SEMICOLON) optional(expression, RPAREN) statement
     { ctx() }
+
+assertion_stmt:
+|  ctx = save_context ASSERTbegin string_literals_assert_list ASSERTend statement
+    {ctx()}
 
 for_statement_header:
 | optional(expression, SEMICOLON)

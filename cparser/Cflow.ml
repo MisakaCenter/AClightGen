@@ -188,6 +188,7 @@ let rec contains_default s =
   | Sseq(s1, s2) -> contains_default s1 || contains_default s2
   | Sif(e, s1, s2) -> contains_default s1 || contains_default s2
   | Swhile(e, s) -> contains_default s
+  | Sassertion(e, s) -> contains_default s
   | Sdowhile(s, e) -> contains_default s
   | Sfor(s1, e, s2, s3) ->
       contains_default s1 || contains_default s2 || contains_default s3
@@ -221,6 +222,8 @@ let rec outcomes env s : flow =
       normal
   | Sseq(s1, s2) ->
       seq (outcomes env s1) (outcomes env s2)
+  | Sassertion(s1, s2) ->
+      (outcomes env s2)
   | Sif(e, s1, s2) ->
       if_ env e (outcomes env s1) (outcomes env s2)
   | Swhile(e, s) ->

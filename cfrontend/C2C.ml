@@ -1076,6 +1076,7 @@ let rec contains_case s =
   | C.Sseq (s1,s2)
   | C.Sif(_,s1,s2) -> contains_case s1; contains_case s2
   | C.Swhile (_,s1)
+  | C.Sassertion(_,s1)
   | C.Sdowhile (s1,_) -> contains_case s1
   | C.Sfor (s1,e,s2,s3) ->  contains_case s1; contains_case s2; contains_case s3
   | C.Slabeled(C.Scase _, _) ->
@@ -1103,6 +1104,9 @@ let rec convertStmt env s =
       let s1' = convertStmt env s1 in
       let s2' = convertStmt env s2 in
       Ssequence(s1', s2')
+  | C.Sassertion(s1, s2) ->
+      let s2' = convertStmt env s2 in
+      Csyntax.Sassertion(coqstring_of_camlstring s1, s2')
   | C.Sif(e, s1, s2) ->
       let te = convertExpr env e in
       swrap (Ctyping.sifthenelse te (convertStmt env s1) (convertStmt env s2))

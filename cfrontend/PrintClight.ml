@@ -194,6 +194,8 @@ let rec print_stmt p s =
       fprintf p "%s:@ %a" (extern_atom lbl) print_stmt s1
   | Sgoto lbl ->
       fprintf p "goto %s;" (extern_atom lbl)
+  | Sassertion(lbl, s1) ->
+      fprintf p "%s:@ %a" (camlstring_of_coqstring lbl) print_stmt s1
 
 and print_cases p cases =
   match cases with

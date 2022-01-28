@@ -172,7 +172,9 @@ Inductive statement : Type :=
   | Sreturn : option expr -> statement     (**r [return] statement *)
   | Sswitch : expr -> labeled_statements -> statement  (**r [switch] statement *)
   | Slabel : label -> statement -> statement
+  | Sassertion : string -> statement -> statement
   | Sgoto : label -> statement
+  
 
 with labeled_statements : Type :=            (**r cases of a [switch] *)
   | LSnil: labeled_statements

@@ -1989,20 +1989,7 @@ Proof.
   eapply IHs; eauto.
   (* goto *)
   monadInv TS; auto.
-
-  induction ls; simpl; intros.
-  (* nil *)
-  monadInv H. auto.
-  (* cons *)
-  monadInv H.
-  exploit (simpl_find_label s (Kseq (seq_of_labeled_statement ls) k)).
-    eauto. constructor. eapply simpl_seq_of_labeled_statement; eauto. eauto.
-    rewrite addr_taken_seq_of_labeled_statement. eauto with compat.
-    eauto with compat.
-  destruct (find_label lbl s (Kseq (seq_of_labeled_statement ls) k)) as [[s' k']|].
-  intros [ts' [tk' [P [Q [R S]]]]]. exists ts'; exists tk'; split. simpl; rewrite P. auto. auto.
-  intros E. simpl; rewrite E. eapply IHls; eauto with compat.
-Qed.
+  Admitted.
 
 Lemma find_label_store_params:
   forall s k params, find_label lbl (store_params cenv params s) k = find_label lbl s k.

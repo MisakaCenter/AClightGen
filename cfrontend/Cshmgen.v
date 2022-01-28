@@ -724,6 +724,9 @@ Fixpoint transl_statement (ce: composite_env) (tyret: type) (nbrk ncnt: nat)
   | Clight.Slabel lbl s =>
       do ts <- transl_statement ce tyret nbrk ncnt s;
       OK (Slabel lbl ts)
+  | Clight.Sassertion lbl s =>
+      do ts <- transl_statement ce tyret nbrk ncnt s;
+      OK ts
   | Clight.Sgoto lbl =>
       OK (Sgoto lbl)
   end

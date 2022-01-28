@@ -383,6 +383,29 @@ let camlstring_of_coqstring (s: char list) =
   | c :: s -> Bytes.set r pos c; fill (pos + 1) s
   in Bytes.to_string (fill 0 s)
 
+let camlstring_of_coqstring_no_space' (s: char list) =
+  let rec count (t:bool) pos = function
+  | [] -> pos
+  | c :: s -> if t then 
+                (if c = ' ' then (count true pos s)
+                            else (count false (pos + 1) s))
+                          else
+                 (if c = ' ' then (count true (pos + 1) s)
+                            else (count false (pos + 1) s))           
+  in (count false 0 s)
+
+let camlstring_of_coqstring_no_space (s: char list) =
+  let r = Bytes.create (camlstring_of_coqstring_no_space' s) in
+  let rec fill (t:bool) pos = function
+  | [] -> r
+  | c :: s -> if t then 
+    (if c = ' ' then (fill true pos s)
+                else (Bytes.set r pos c;(fill false (pos + 1) s)))
+              else
+     (if c = ' ' then (Bytes.set r pos c;fill true (pos + 1) s)
+                else (Bytes.set r pos c;(fill false (pos + 1) s)))  
+  in Bytes.to_string (fill false 0 s)
+
 let coqstring_of_camlstring s =
   let rec cstring accu pos =
     if pos < 0 then accu else cstring (s.[pos] :: accu) (pos - 1)

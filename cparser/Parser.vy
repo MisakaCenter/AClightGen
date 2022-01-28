@@ -24,6 +24,7 @@ Require Cabs.
 %token<Cabs.string * Cabs.loc> VAR_NAME TYPEDEF_NAME OTHER_NAME
 %token<Cabs.string * Cabs.loc> PRAGMA
 %token<bool * list Cabs.char_code * Cabs.loc> STRING_LITERAL
+%token<bool * list Cabs.char_code * Cabs.loc> STRING_LITERAL_ASSERT
 %token<Cabs.constant * Cabs.loc> CONSTANT
 %token<Cabs.loc> SIZEOF PTR INC DEC LEFT RIGHT LEQ GEQ EQEQ EQ NEQ LT GT
   ANDAND BARBAR PLUS MINUS STAR TILDE BANG SLASH PERCENT HAT BAR QUESTION
@@ -38,7 +39,7 @@ Require Cabs.
   STRUCT UNION ENUM UNDERSCORE_BOOL PACKED ALIGNAS ATTRIBUTE ASM
 
 %token<Cabs.loc> CASE DEFAULT IF_ ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK
-  RETURN BUILTIN_VA_ARG BUILTIN_OFFSETOF STATIC_ASSERT
+  RETURN BUILTIN_VA_ARG BUILTIN_OFFSETOF STATIC_ASSERT ASSERTbegin ASSERTend
 
 %token EOF
 
@@ -90,6 +91,7 @@ Require Cabs.
 %type<Cabs.statement> statement_dangerous statement_safe
   labeled_statement(statement_safe) labeled_statement(statement_dangerous)
   iteration_statement(statement_safe) iteration_statement(statement_dangerous)
+  assertion_stmt(statement_safe) assertion_stmt(statement_dangerous)
   compound_statement
 %type<list Cabs.statement (* Reverse order *)> block_item_list
 %type<Cabs.statement> block_item expression_statement selection_statement_dangerous
@@ -774,6 +776,7 @@ statement_dangerous:
 | stmt = expression_statement
 | stmt = selection_statement_dangerous
 | stmt = iteration_statement(statement_dangerous)
+| stmt = assertion_stmt(statement_dangerous)
 | stmt = jump_statement
 (* Non-standard *)
 | stmt = asm_statement
@@ -786,6 +789,7 @@ statement_safe:
 | stmt = selection_statement_safe
 | stmt = iteration_statement(statement_safe)
 | stmt = jump_statement
+| stmt = assertion_stmt(statement_safe)
 (* Non-standard *)
 | stmt = asm_statement
     { stmt }
@@ -882,6 +886,11 @@ iteration_statement(last_statement):
     { Cabs.FOR (Some (Cabs.FC_DECL decl1)) None None stmt loc }
 | loc = FOR LPAREN SEMICOLON SEMICOLON RPAREN stmt = last_statement
     { Cabs.FOR None None None stmt loc }
+
+assertion_stmt(last_statement):
+| loc = ASSERTbegin str = STRING_LITERAL_ASSERT ASSERTend stmt = last_statement
+    { let '((wide, chars), locs) := str in
+        Cabs.ASSERTION wide chars stmt loc }
 
 (* 6.8.6 *)
 jump_statement:

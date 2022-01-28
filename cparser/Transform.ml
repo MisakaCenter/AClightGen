@@ -150,6 +150,8 @@ let stmt ~expr ?(decl = fun env decl -> assert false) env s =
       {s with sdesc = Sdo(expr s.sloc env Effects e)}
   | Sseq(s1, s2) ->
       {s with sdesc = Sseq(stm s1, stm s2)}
+  | Sassertion(s1, s2) ->
+      {s with sdesc = Sassertion(s1, stm s2)}
   | Sif(e, s1, s2) ->
       {s with sdesc = Sif(expr s.sloc env Val e, stm s1, stm s2)}
   | Swhile(e, s1) ->

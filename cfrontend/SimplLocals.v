@@ -143,6 +143,9 @@ Fixpoint simpl_stmt (cenv: compilenv) (s: statement) : res statement :=
   | Slabel lbl s =>
       do s' <- simpl_stmt cenv s;
       OK (Slabel lbl s')
+  | Sassertion lbl s =>
+      do s' <- simpl_stmt cenv s;
+      OK (Sassertion lbl s')
   | Sgoto lbl => OK (Sgoto lbl)
   end
 
@@ -219,6 +222,7 @@ Fixpoint addr_taken_stmt (s: statement) : VSet.t :=
   | Sreturn (Some a) => addr_taken_expr a
   | Sswitch a ls => VSet.union (addr_taken_expr a) (addr_taken_lblstmt ls)
   | Slabel lbl s => addr_taken_stmt s
+  | Sassertion lbl s => addr_taken_stmt s
   | Sgoto lbl => VSet.empty
   end
 

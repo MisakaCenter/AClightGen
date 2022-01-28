@@ -1318,6 +1318,7 @@ let rec subst_stmt phi s =
       | Sgoto _ -> s.sdesc
       | Sdo e -> Sdo (subst_expr phi e)
       | Sseq(s1, s2) -> Sseq (subst_stmt phi s1, subst_stmt phi s2)
+      | Sassertion(s1, s2) -> Sassertion (s1, subst_stmt phi s2)
       | Sif(e, s1, s2) ->
           Sif (subst_expr phi e, subst_stmt phi s1, subst_stmt phi s2)
       | Swhile(e, s1) -> Swhile (subst_expr phi e, subst_stmt phi s1)

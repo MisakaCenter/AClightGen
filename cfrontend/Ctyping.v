@@ -494,6 +494,10 @@ Inductive wt_stmt: statement -> Prop :=
       wt_stmt s -> wt_stmt (Slabel lbl s)
   | wt_Sgoto: forall lbl,
       wt_stmt (Sgoto lbl)
+  | wt_Sassertion:
+      forall a s,
+      wt_stmt s ->
+      wt_stmt (Sassertion a s)
 
 with wt_lblstmts : labeled_statements -> Prop :=
   | wt_LSnil:
@@ -903,6 +907,7 @@ Fixpoint retype_stmt (ce: composite_env) (e: typenv) (rt: type) (s: statement) :
       do s' <- retype_stmt ce e rt s; OK (Slabel lbl s')
   | Sgoto lbl =>
       OK (Sgoto lbl)
+  | Sassertion a s => do s' <- retype_stmt ce e rt s; OK (Sassertion a s')
   end
 
 with retype_lblstmts (ce: composite_env) (e: typenv) (rt: type) (sl: labeled_statements) : res labeled_statements :=
@@ -1371,7 +1376,8 @@ Proof.
 + destruct o; monadInv RT. eapply sreturn_sound; eauto using retype_expr_sound. constructor.
 + eapply sswitch_sound; eauto using retype_expr_sound.
 + constructor; eauto.
-+ constructor.
++ constructor; eauto.
++ constructor; eauto.
 - destruct sl; simpl; intros sl' RT; monadInv RT.
 + constructor.
 + constructor; eauto.

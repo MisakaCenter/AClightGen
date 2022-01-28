@@ -84,7 +84,7 @@ let rec expr p = function
       fprintf p "(Ealignof %a %a)" typ t1 typ t
 
 (* Statements *)
-
+    
 let rec stmt p = function
   | Sskip ->
       fprintf p "Sskip"
@@ -125,6 +125,8 @@ let rec stmt p = function
       fprintf p "@[<hv 2>(Sreturn %a)@]" (print_option expr) e
   | Slabel(lbl, s1) ->
       fprintf p "@[<hv 2>(Slabel %a@ %a)@]" ident lbl stmt s1
+  | Sassertion(lbl, s1) ->
+      fprintf p "@[<hv 2>(Sassertion %S %a)@]" (String.trim (camlstring_of_coqstring_no_space lbl)) stmt s1
   | Sgoto lbl ->
       fprintf p "(Sgoto %a)" ident lbl
 
@@ -208,6 +210,7 @@ let rec name_stmt = function
   | Sreturn (Some e) -> name_expr e
   | Sreturn None -> ()
   | Slabel(lbl, s1) -> name_stmt s1
+  | Sassertion(lbl, s1) -> name_stmt s1
   | Sgoto lbl -> ()
 
 and name_lblstmts = function

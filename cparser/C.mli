@@ -213,6 +213,7 @@ and stmt_desc =
   | Scontinue
   | Sswitch of exp * stmt
   | Slabeled of slabel * stmt
+  | Sassertion of string * stmt
   | Sgoto of string
   | Sreturn of exp option
   | Sblock of stmt list

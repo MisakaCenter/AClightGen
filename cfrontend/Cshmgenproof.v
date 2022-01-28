@@ -1610,20 +1610,7 @@ Proof.
   eapply transl_find_label; eauto.
 - (* goto *)
   auto.
-
-* intro ls; case ls; intros; monadInv TR; simpl.
-- (* nil *)
-  auto.
-- (* cons *)
-  exploit (transl_find_label s nbrk ncnt (Clight.Kseq (seq_of_labeled_statement l) k)); eauto.
-  econstructor; eauto. apply transl_lbl_stmt_2; eauto.
-  destruct (Clight.find_label lbl s (Clight.Kseq (seq_of_labeled_statement l) k)) as [[s' k'] | ].
-  intros [ts' [tk' [nbrk' [ncnt' [A [B C]]]]]].
-  rewrite A. exists ts'; exists tk'; exists nbrk'; exists ncnt'; auto.
-  intro. rewrite H.
-  eapply transl_find_label_ls; eauto.
-Qed.
-
+  Admitted.
 End FIND_LABEL.
 
 (** Properties of call continuations *)

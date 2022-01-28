@@ -137,6 +137,8 @@ let rec norm_stmt s =
       add_sequence sl (Sswitch(e', norm_lbl_stmt ls))
   | Slabel(lbl, s1) ->
       Slabel(lbl, norm_stmt s1)
+  | Sassertion(lbl, s1) ->
+      Sassertion(lbl, norm_stmt s1)
   | Sgoto lbl -> s
 
 and norm_lbl_stmt ls =

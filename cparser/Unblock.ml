@@ -269,6 +269,9 @@ let rec unblock_stmt env ctx ploc s =
   | Sseq(s1, s2) ->
       {s with sdesc = Sseq(unblock_stmt env ctx ploc s1,
                            unblock_stmt env ctx s1.sloc s2)}
+  | Sassertion(s1, s2) ->
+      {s with sdesc = Sassertion(s1,
+                                 unblock_stmt env ctx s.sloc s2)}
   | Sif(e, s1, s2) ->
       add_lineno ctx ploc s.sloc
         {s with sdesc = Sif(expand_expr true env e,

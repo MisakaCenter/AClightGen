@@ -438,6 +438,22 @@ let elab_string_literal loc wide chars =
     CStr (Bytes.to_string res)
   end
 
+let elab_string_literal' loc wide chars =
+  let nbits = if wide then 8 * !config.sizeof_wchar else 8 in
+  let char_max = Int64.shift_left 1L nbits in
+  List.iter
+    (fun c ->
+      if c < 0L || c >= char_max
+      then error loc "escape sequence is out of range (code 0x%LX)" c)
+    chars;
+  begin
+    let res = Bytes.create (List.length chars) in
+    List.iteri
+      (fun i c -> Bytes.set res i (Char.unsafe_chr (Int64.to_int c)))
+      chars;
+    CStr (Bytes.to_string res)
+  end
+
 let elab_constant loc = function
   | CONST_INT s ->
       let (v, ik) = elab_int_constant loc s in
@@ -455,6 +471,11 @@ let elab_simple_string loc wide chars =
   match elab_string_literal loc wide chars with
   | CStr s -> s
   | _ -> error loc "cannot use wide string literal in 'asm'"; ""
+
+let elab_simple_string_assert loc wide chars =
+  match elab_string_literal' loc wide chars with
+  | CStr s -> s
+  | _ -> error loc "unknown error of assertion"; ""
 
 (** Elaboration and checking of static assertions *)
 
@@ -2954,6 +2975,7 @@ let check_switch_cases switch_body =
     | Sseq(s1, s2) -> check s1; check s2
     | Sif(_, s1, s2) -> check s1; check s2
     | Swhile(_, s1) -> check s1
+    | Sassertion(_, s1) -> check s1
     | Sdowhile(s1, _) -> check s1
     | Sfor(s1, _, s2, s3) -> check s1; check s2; check s3
     | Sbreak -> ()
@@ -2992,7 +3014,11 @@ let rec elab_stmt env ctx s =
   | COMPUTATION(a, loc) ->
       let a,env =  elab_expr ctx loc env a in
       { sdesc = Sdo a; sloc = elab_loc loc },env
-
+  
+  | ASSERTION(wide, chars, s1, loc) ->
+      let s = elab_simple_string_assert loc wide chars in
+      let s1,env = elab_stmt env ctx s1 in
+      { sdesc = Sassertion(s, s1); sloc = elab_loc loc },env
 (* 6.8.1 Labeled statements *)
 
   | LABEL(lbl, s1, loc) ->
