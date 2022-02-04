@@ -184,6 +184,7 @@ let loop (s: flow) : flow = fun i ->
 let rec contains_default s =
   match s.sdesc with
   | Sskip -> false
+  | Sgiven _ -> false
   | Sdo _ -> false
   | Sseq(s1, s2) -> contains_default s1 || contains_default s2
   | Sif(e, s1, s2) -> contains_default s1 || contains_default s2
@@ -212,6 +213,8 @@ let rec contains_default s =
 let rec outcomes env s : flow =
   match s.sdesc with
   | Sskip ->
+      normal
+  | Sgiven _ ->
       normal
   | Sdo {edesc = ECall(fn, args)} ->
     let returns = find_custom_attributes ["noreturn"; "__noreturn__"]

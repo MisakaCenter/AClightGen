@@ -140,6 +140,7 @@ let rec norm_stmt s =
   | Sassertion(lbl, s1) ->
       Sassertion(lbl, norm_stmt s1)
   | Sgoto lbl -> s
+  | Sgiven _ -> s
 
 and norm_lbl_stmt ls =
   match ls with

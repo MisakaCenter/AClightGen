@@ -27,6 +27,7 @@ let fold_over_stmt_loc ~(expr: 'a -> location -> exp -> 'a)
   let rec fold a s =
     match s.sdesc with
     | Sskip -> a
+    | Sgiven _ -> a
     | Sbreak -> a
     | Scontinue -> a
     | Slabeled(_, s1) -> fold a s1

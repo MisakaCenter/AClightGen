@@ -1072,6 +1072,7 @@ let rec contains_case s =
   | C.Sgoto _
   | C.Sreturn _
   | C.Sdecl _
+  | C.Sgiven _
   | C.Sasm _ ->  ()
   | C.Sseq (s1,s2)
   | C.Sif(_,s1,s2) -> contains_case s1; contains_case s2
@@ -1098,6 +1099,8 @@ let rec convertStmt env s =
   match s.sdesc with
   | C.Sskip ->
       Csyntax.Sskip
+  | C.Sgiven(a) ->
+      Csyntax.Sgiven(coqstring_of_camlstring a)
   | C.Sdo e ->
       swrap (Ctyping.sdo (convertExpr env e))
   | C.Sseq(s1, s2) ->

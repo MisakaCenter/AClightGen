@@ -84,6 +84,7 @@ let add_asm_operand (lbl, cstr, e) = add_exp e
 let rec add_stmt s =
   match s.sdesc with
   | Sskip -> ()
+  | Sgiven _ -> ()
   | Sdo e -> add_exp e
   | Sseq(s1, s2) -> add_stmt s1; add_stmt s2
   | Sassertion(s1, s2) -> add_stmt s2

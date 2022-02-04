@@ -2972,6 +2972,7 @@ let check_switch_cases switch_body =
     match s.sdesc with
     | Sskip -> ()
     | Sdo _ -> ()
+    | Sgiven _ -> ()
     | Sseq(s1, s2) -> check s1; check s2
     | Sif(_, s1, s2) -> check s1; check s2
     | Swhile(_, s1) -> check s1
@@ -3019,6 +3020,9 @@ let rec elab_stmt env ctx s =
       let s = elab_simple_string_assert loc wide chars in
       let s1,env = elab_stmt env ctx s1 in
       { sdesc = Sassertion(s, s1); sloc = elab_loc loc },env
+  | GIVEN(wide, chars, loc) ->
+      let s = elab_simple_string_assert loc wide chars in
+      { sdesc = Sgiven(s); sloc = elab_loc loc },env
 (* 6.8.1 Labeled statements *)
 
   | LABEL(lbl, s1, loc) ->

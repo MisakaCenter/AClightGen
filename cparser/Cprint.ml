@@ -414,6 +414,8 @@ let rec stmt pp s =
   match s.sdesc with
   | Sskip ->
       fprintf pp "/*skip*/;"
+  | Sgiven _ ->
+      fprintf pp "/* Given */;"
   | Sdo e ->
       fprintf pp "%a;" exp (0, e)
   | Sseq(s1, s2) ->

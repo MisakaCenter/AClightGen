@@ -261,6 +261,7 @@ rule initial = parse
   | '\n'                          { new_line lexbuf; initial_linebegin lexbuf }
   | whitespace_char_no_newline +  { initial lexbuf }
   | "/*ASSERT"                    { ASSERTbegin(currentLoc lexbuf) }
+  | "/*GIVEN"                     { GIVENbegin(currentLoc lexbuf) }
   | "END*/"                       { ASSERTend(currentLoc lexbuf) }
   | "/*"                          { multiline_comment lexbuf; initial lexbuf }
   | "//"                          { singleline_comment lexbuf; initial lexbuf }
@@ -598,6 +599,7 @@ and singleline_comment = parse
       | Pre_parser.STATIC loc -> loop (Parser.STATIC loc)
       | Pre_parser.STATIC_ASSERT loc -> loop (Parser.STATIC_ASSERT loc)
       | Pre_parser.ASSERTbegin loc -> loop (Parser.ASSERTbegin loc)
+      | Pre_parser.GIVENbegin loc -> loop (Parser.GIVENbegin loc)
       | Pre_parser.ASSERTend loc -> loop (Parser.ASSERTend loc)
       | Pre_parser.STRING_LITERAL (wide, str, loc) ->
           (* Merge consecutive string literals *)

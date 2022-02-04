@@ -1313,6 +1313,7 @@ let rec subst_stmt phi s =
   { s with sdesc =
       match s.sdesc with
       | Sskip
+      | Sgiven _
       | Sbreak
       | Scontinue
       | Sgoto _ -> s.sdesc

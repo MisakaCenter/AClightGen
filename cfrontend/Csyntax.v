@@ -173,6 +173,7 @@ Inductive statement : Type :=
   | Sswitch : expr -> labeled_statements -> statement  (**r [switch] statement *)
   | Slabel : label -> statement -> statement
   | Sassertion : string -> statement -> statement
+  | Sgiven : string -> statement
   | Sgoto : label -> statement
   
 

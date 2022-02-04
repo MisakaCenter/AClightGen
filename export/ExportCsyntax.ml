@@ -141,6 +141,8 @@ let rec statement p = function
       fprintf p "@[<hv 2>(Slabel %a@ %a)@]" ident lbl statement s1
   | Sassertion(lbl, s1) ->
       fprintf p "@[<hv 2>(Sassertion %S %a)@]" (String.trim (camlstring_of_coqstring_no_space lbl)) statement s1
+  | Sgiven(lbl) ->
+      fprintf p "@[<hv 2>(Sgiven %S)@]" (String.trim (camlstring_of_coqstring_no_space lbl))
   | Sgoto lbl ->
       fprintf p "(Sgoto %a)" ident lbl
 

@@ -159,6 +159,7 @@ let rec stmt env s =
 
 and stmt_desc env = function
   | Sskip -> Sskip
+  | Sgiven a -> Sgiven a
   | Sdo a -> Sdo (exp env a)
   | Sseq(s1, s2) -> Sseq(stmt env s1, stmt env s2)
   | Sassertion(s1, s2) -> Sassertion(s1, stmt env s2)

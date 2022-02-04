@@ -225,6 +225,7 @@ with statement :=
  | ASM : list cvspec -> bool -> list char_code -> list asm_operand -> list asm_operand -> list asm_flag -> loc -> statement
  | DEFINITION : definition -> statement (*definition or declaration of a variable or type*)
  | ASSERTION : bool -> list char_code -> statement -> loc -> statement (* user written assertion *)
+ | GIVEN : bool -> list char_code -> loc -> statement (* user written assertion *)
 
 with for_clause :=
  | FC_EXP : expression -> for_clause

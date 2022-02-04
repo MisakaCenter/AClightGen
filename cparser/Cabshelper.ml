@@ -68,6 +68,7 @@ begin
   | DEFINITION d -> get_definitionloc d
   | ASM(_,_,_,_,_,_,loc) -> loc
   | ASSERTION(_, _, _,loc) -> loc
+  | GIVEN(_, _,loc) -> loc
 end
 
 let string_of_loc l =

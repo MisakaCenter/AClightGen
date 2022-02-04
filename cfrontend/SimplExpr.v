@@ -513,6 +513,7 @@ Defined.
 Fixpoint transl_stmt (s: Csyntax.statement) : mon statement :=
   match s with
   | Csyntax.Sskip => ret Sskip
+  | Csyntax.Sgiven a => ret (Sgiven a)
   | Csyntax.Sdo e => transl_expr_stmt e
   | Csyntax.Ssequence s1 s2 =>
       do ts1 <- transl_stmt s1;

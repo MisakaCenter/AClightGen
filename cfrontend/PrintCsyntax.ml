@@ -322,6 +322,8 @@ let rec print_stmt p s =
   match s with
   | Sskip ->
       fprintf p "/*skip*/;"
+  | Sgiven(a) ->
+      fprintf p "/* Given */;"
   | Sdo e ->
       fprintf p "%a;" print_expr e
   | Ssequence(s1, s2) ->

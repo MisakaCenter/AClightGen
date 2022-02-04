@@ -59,7 +59,7 @@
   AUTO REGISTER INLINE NORETURN CHAR SHORT INT LONG SIGNED UNSIGNED FLOAT DOUBLE
   UNDERSCORE_BOOL CONST VOLATILE VOID STRUCT UNION ENUM CASE DEFAULT IF ELSE
   SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN BUILTIN_VA_ARG ALIGNOF
-  ATTRIBUTE ALIGNAS PACKED ASM BUILTIN_OFFSETOF STATIC_ASSERT ASSERTbegin ASSERTend
+  ATTRIBUTE ALIGNAS PACKED ASM BUILTIN_OFFSETOF STATIC_ASSERT GIVENbegin ASSERTbegin ASSERTend
 
 %token EOF
 
@@ -791,6 +791,7 @@ statement:
 | jump_statement
 | asm_statement
 | assertion_stmt
+| given_stmt
     {}
 
 labeled_statement:
@@ -850,6 +851,10 @@ iteration_statement:
 
 assertion_stmt:
 |  ctx = save_context ASSERTbegin string_literals_assert_list ASSERTend statement
+    {ctx()}
+
+given_stmt:
+|  ctx = save_context GIVENbegin string_literals_assert_list ASSERTend
     {ctx()}
 
 for_statement_header:

@@ -127,6 +127,8 @@ let rec stmt p = function
       fprintf p "@[<hv 2>(Slabel %a@ %a)@]" ident lbl stmt s1
   | Sassertion(lbl, s1) ->
       fprintf p "@[<hv 2>(Sassertion %S %a)@]" (String.trim (camlstring_of_coqstring_no_space lbl)) stmt s1
+  | Sgiven(lbl) ->
+      fprintf p "@[<hv 2>(Sgiven %S)@]" (String.trim (camlstring_of_coqstring_no_space lbl))
   | Sgoto lbl ->
       fprintf p "(Sgoto %a)" ident lbl
 
@@ -195,6 +197,7 @@ let rec name_expr = function
 
 let rec name_stmt = function
   | Sskip -> ()
+  | Sgiven _ -> ()
   | Sassign(e1, e2) -> name_expr e1; name_expr e2
   | Sset(id, e2) -> name_temporary id; name_expr e2
   | Scall(optid, e1, el) ->

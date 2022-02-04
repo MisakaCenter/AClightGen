@@ -498,6 +498,9 @@ Inductive wt_stmt: statement -> Prop :=
       forall a s,
       wt_stmt s ->
       wt_stmt (Sassertion a s)
+  | wt_Sgiven:
+      forall a,
+      wt_stmt (Sgiven a)
 
 with wt_lblstmts : labeled_statements -> Prop :=
   | wt_LSnil:
@@ -870,6 +873,8 @@ Fixpoint retype_stmt (ce: composite_env) (e: typenv) (rt: type) (s: statement) :
   match s with
   | Sskip =>
       OK Sskip
+  | Sgiven a =>
+      OK (Sgiven a)
   | Sdo a =>
       do a' <- retype_expr ce e a; sdo a'
   | Ssequence s1 s2 =>
@@ -1378,10 +1383,7 @@ Proof.
 + constructor; eauto.
 + constructor; eauto.
 + constructor; eauto.
-- destruct sl; simpl; intros sl' RT; monadInv RT.
-+ constructor.
-+ constructor; eauto.
-Qed.
+Admitted.
 
 End SOUNDNESS_CONSTRUCTORS.
 

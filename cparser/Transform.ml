@@ -146,6 +146,7 @@ let stmt ~expr ?(decl = fun env decl -> assert false) env s =
   let rec stm s =
   match s.sdesc with
   | Sskip -> s
+  | Sgiven _ -> s
   | Sdo e ->
       {s with sdesc = Sdo(expr s.sloc env Effects e)}
   | Sseq(s1, s2) ->

@@ -89,11 +89,32 @@ Definition f_main := {|
   (Ssequence
     (Sset _a (Econst_int (Int.repr 0) tint))
     (Ssequence
-      (Sassertion "Ex (x: typ)(y: typ), PROP{};; LOCAL{Temp x tint y};; SEP{ (Data_at c tint d) * (Emp) }" 
-        (Sset _a
-          (Ebinop Oadd (Etempvar _a tint) (Econst_int (Int.repr 1) tint)
-            tint)))
-      (Sreturn (Some (Econst_int (Int.repr 0) tint)))))
+      (Sassertion "EX (x:Z)(y:ptr)(z:Z) , PROP{} LOCAL{Temp 1 (AbsVar z) tint, Temp 2 (AbsVar y) tptr} SEP{Mapsto (AbsVar x) tint (AbsVar y) * Emp}" 
+        (Sgiven "x"))
+      (Ssequence
+        (Sgiven "z")
+        (Ssequence
+          (Sgiven "y")
+          (Ssequence
+            (Sset _a
+              (Ebinop Oadd (Etempvar _a tint) (Econst_int (Int.repr 1) tint)
+                tint))
+            (Ssequence
+              (Sset _a
+                (Ebinop Oadd (Etempvar _a tint)
+                  (Econst_int (Int.repr 1) tint) tint))
+              (Ssequence
+                (Sassertion "PROP{} LOCAL{Temp 1 (AbsVar x) tint, Temp 2 (AbsVar y) tint} SEP{Mapsto (AbsVar x) tint (AbsVar y) * Emp}" 
+                  (Sset _a
+                    (Ebinop Oadd (Etempvar _a tint)
+                      (Econst_int (Int.repr 1) tint) tint)))
+                (Ssequence
+                  (Sassertion "PROP{} LOCAL{Temp 1 (AbsVar x) tint, Temp 2 (AbsVar y) tint} SEP{Mapsto (AbsVar x) tint (AbsVar y) * Emp}" 
+                    (Sset _a
+                      (Ebinop Oadd (Etempvar _a tint)
+                        (Econst_int (Int.repr 1) tint) tint)))
+                  (Sassertion "PROP{} LOCAL{Temp 1 (AbsVar x) tint, Temp 2 (AbsVar y) tint} SEP{Mapsto (AbsVar x) tint (AbsVar y) * Emp}" 
+                    (Sreturn (Some (Econst_int (Int.repr 0) tint))))))))))))
   (Sreturn (Some (Econst_int (Int.repr 0) tint))))
 |}.
 

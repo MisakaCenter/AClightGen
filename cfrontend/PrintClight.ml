@@ -188,6 +188,8 @@ let rec print_stmt p s =
               print_cases cases
   | Sreturn None ->
       fprintf p "return;"
+  | Sgiven(a) ->
+      fprintf p "/* Given */"
   | Sreturn (Some e) ->
       fprintf p "return %a;" print_expr e
   | Slabel(lbl, s1) ->

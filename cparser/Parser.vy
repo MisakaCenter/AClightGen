@@ -39,7 +39,7 @@ Require Cabs.
   STRUCT UNION ENUM UNDERSCORE_BOOL PACKED ALIGNAS ATTRIBUTE ASM
 
 %token<Cabs.loc> CASE DEFAULT IF_ ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK
-  RETURN BUILTIN_VA_ARG BUILTIN_OFFSETOF STATIC_ASSERT ASSERTbegin ASSERTend
+  RETURN BUILTIN_VA_ARG BUILTIN_OFFSETOF STATIC_ASSERT GIVENbegin ASSERTbegin ASSERTend
 
 %token EOF
 
@@ -95,7 +95,7 @@ Require Cabs.
   compound_statement
 %type<list Cabs.statement (* Reverse order *)> block_item_list
 %type<Cabs.statement> block_item expression_statement selection_statement_dangerous
-  selection_statement_safe jump_statement asm_statement
+  selection_statement_safe jump_statement asm_statement given_stmt
 %type<list Cabs.definition (* Reverse order *)> translation_unit
 %type<Cabs.definition> external_declaration function_definition
 %type<list Cabs.definition> declaration_list
@@ -777,6 +777,7 @@ statement_dangerous:
 | stmt = selection_statement_dangerous
 | stmt = iteration_statement(statement_dangerous)
 | stmt = assertion_stmt(statement_dangerous)
+| stmt = given_stmt
 | stmt = jump_statement
 (* Non-standard *)
 | stmt = asm_statement
@@ -790,6 +791,7 @@ statement_safe:
 | stmt = iteration_statement(statement_safe)
 | stmt = jump_statement
 | stmt = assertion_stmt(statement_safe)
+| stmt = given_stmt
 (* Non-standard *)
 | stmt = asm_statement
     { stmt }
@@ -891,6 +893,11 @@ assertion_stmt(last_statement):
 | loc = ASSERTbegin str = STRING_LITERAL_ASSERT ASSERTend stmt = last_statement
     { let '((wide, chars), locs) := str in
         Cabs.ASSERTION wide chars stmt loc }
+
+given_stmt:
+| loc = GIVENbegin str = STRING_LITERAL_ASSERT ASSERTend
+    { let '((wide, chars), locs) := str in
+        Cabs.GIVEN wide chars loc }
 
 (* 6.8.6 *)
 jump_statement:

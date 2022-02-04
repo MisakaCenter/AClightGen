@@ -433,6 +433,9 @@ Inductive tr_if: Csyntax.expr -> statement -> statement -> statement -> Prop :=
 Inductive tr_stmt: Csyntax.statement -> statement -> Prop :=
   | tr_skip:
       tr_stmt Csyntax.Sskip Sskip
+  | tr_sgiven:
+      forall a,
+      tr_stmt (Csyntax.Sgiven a) (Sgiven a)
   | tr_do: forall r s,
       tr_expr_stmt r s ->
       tr_stmt (Csyntax.Sdo r) s
