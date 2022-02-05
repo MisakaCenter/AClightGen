@@ -8,8 +8,8 @@ int main(){
              |] 
     END*/
     /*GIVEN [| x |] END*/
-    /*GIVEN [| z |] END*/
     /*GIVEN [| y |] END*/
+    /*GIVEN [| z |] END*/
     a = a + 1;
     a = a + 1;
     /*ASSERT [| PROP{} 

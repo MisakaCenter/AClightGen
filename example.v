@@ -92,9 +92,9 @@ Definition f_main := {|
       (Sassertion "EX (x:Z)(y:ptr)(z:Z) , PROP{} LOCAL{Temp 1 (AbsVar z) tint, Temp 2 (AbsVar y) tptr} SEP{Mapsto (AbsVar x) tint (AbsVar y) * Emp}" 
         (Sgiven "x"))
       (Ssequence
-        (Sgiven "z")
+        (Sgiven "y")
         (Ssequence
-          (Sgiven "y")
+          (Sgiven "z")
           (Ssequence
             (Sset _a
               (Ebinop Oadd (Etempvar _a tint) (Econst_int (Int.repr 1) tint)
